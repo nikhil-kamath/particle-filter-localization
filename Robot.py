@@ -7,7 +7,7 @@ class Robot:
     """class which allows for simulating where the robot thinks it is. 
     Also allows for different levels of errors in the measurements
     """
-    def __init__(self, linear: Linear, angular: Angular, position: Tuple[int, int]=(0, 0), angle: int=0, v: float=.05, omega: float=.005) -> None:
+    def __init__(self, linear: Linear, angular: Angular, position: Tuple[int, int]=(0, 0), angle: int=0, v: float=.5, omega: float=.05) -> None:
         self.position = position # location
         self.angle = angle # turn angle, 0 degrees is to the right
         

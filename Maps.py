@@ -120,32 +120,37 @@ def place_robot(Map: pygame.Surface, Target: pygame.Surface, target_location: Tu
 
     return loc, blank
 
-def draw_robot(Target: pygame.Surface, r: Robot):
-    pygame.draw.circle(Target, (200, 200, 255), r.position, 10)
+def draw_robot(Target: pygame.Surface, r: Robot, true_robot=True):
+    robot_color = (200, 200, 255) if true_robot else (255, 200, 200)
+    
+    pygame.draw.circle(Target, robot_color, r.position, 10)
     x, y = r.position
     length = 8
     x2 = x + length * cos(r.angle)
-    y2 = y + length * sin(r.angle) 
+    y2 = y + length * sin(r.angle)
     pygame.draw.line(Target, (0, 0, 0), r.position, (x2, y2), width=3)
     
 
-def move_loop(Map: pygame.Surface, Target: pygame.Surface, target_location: Tuple[int, int], robot: Robot, exit_key=pygame.K_RETURN):
+def move_loop(Map: pygame.Surface, Target: pygame.Surface, target_location: Tuple[int, int], robots: List[Robot], exit_key=pygame.K_RETURN):
     blank = Target.copy()
     
     running = True
     while running:
-        print(robot.angle)
         running = check_continue(exit_key)
         
         forward, ccw, cw = check_movements()
         
         new = blank.copy()
         if forward:
-            robot.drive(1)
+            for robot in robots:
+                robot.drive(.1)
         if ccw != cw:
-            robot.turn(1, cw)
+            for robot in robots:
+                robot.turn(.1, cw)
         
-        draw_robot(new, robot)
+        for index, robot in enumerate(robots):        
+            draw_robot(new, robot, true_robot = not bool(index))
+            
         Map.blit(new, target_location)
         
         pygame.display.update()

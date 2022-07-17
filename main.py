@@ -45,7 +45,13 @@ def main():
     print(robot_position)
     
     # move loop
-    move_loop(Map, left, left_panel_location, Robot(Linear(), Angular(), robot_position))
+    robots = [
+        Robot(Linear(0, 0), Angular(0, 0), robot_position),
+        Robot(Linear(0, .01), Angular(0, .01), robot_position),
+        Robot(Linear(0, .05), Angular(0, .05), robot_position),
+        Robot(Linear(0, .1), Angular(0, .1), robot_position),
+    ]
+    move_loop(Map, left, left_panel_location, robots)
     
     
     
