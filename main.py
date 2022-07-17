@@ -1,5 +1,7 @@
 import pygame
-from Maps import draw_on_surface, end_loop, place_robot
+from Maps import move_loop, draw_on_surface, draw_robot, end_loop, place_robot
+from Odometry import Angular, Linear
+from Robot import Robot
 
 def main():
     pygame.init()
@@ -27,21 +29,25 @@ def main():
     
     # allowing user to create map
     left = pygame.Surface((WIDTH/2, HEIGHT-HEADER_HEIGHT-1))
-    location = (0, HEADER_HEIGHT+1)
+    left_panel_location = (0, HEADER_HEIGHT+1)
     hint = pygame.font.SysFont('Monaco', 100)
     hint_box = hint.render('draw here', True, (150, 150, 150))
     Map.blit(hint_box, (WIDTH/4-hint_box.get_width()/2, (HEIGHT-HEADER_HEIGHT-hint_box.get_height())/2))
-    points = draw_on_surface(Map, left, location)
+    points = draw_on_surface(Map, left, left_panel_location)
     
     # putting another copy of the map on the right side
-    Map.blit(left, (WIDTH/2+1, location[1]))
+    Map.blit(left, (WIDTH/2+1, left_panel_location[1]))
     
     print(points)
     
     # allowing user to place robot
-    loc = place_robot(Map, left, location)
+    robot_position, left = place_robot(Map, left, left_panel_location)
+    print(robot_position)
     
-    print(loc)
+    # move loop
+    move_loop(Map, left, left_panel_location, Robot(Linear(), Angular(), robot_position))
+    
+    
     
     end_loop()
     

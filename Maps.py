@@ -1,4 +1,6 @@
+from math import cos, sin
 from typing import List, Tuple
+from Robot import Robot
 import pygame
 
 
@@ -69,6 +71,15 @@ def check_continue(key=pygame.K_RETURN) -> bool:
     return not any(event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == key) for event in pygame.event.get())
         
 
+def check_movements() -> Tuple[bool, bool, bool]:
+    """Checks for pressing of the 3 movement keys
+
+    Returns:
+        List[bool, bool, bool]: first key represents moving forwards, second is turning ccw, third is turning cw
+    """
+    keys = pygame.key.get_pressed()
+    return (keys[pygame.K_w], keys[pygame.K_d], keys[pygame.K_a]) # NOTE: these are flipped since the origin is at the TOP. Ensures sin/cos still work properly
+
 def place_robot(Map: pygame.Surface, Target: pygame.Surface, target_location: Tuple[int, int], exit_key=pygame.K_RETURN) -> List[Tuple[int, int]]:
     """Allows user to place robot in a location
 
@@ -107,4 +118,37 @@ def place_robot(Map: pygame.Surface, Target: pygame.Surface, target_location: Tu
 
         pygame.display.update()
 
-    return loc
+    return loc, blank
+
+def draw_robot(Target: pygame.Surface, r: Robot):
+    pygame.draw.circle(Target, (200, 200, 255), r.position, 10)
+    x, y = r.position
+    length = 8
+    x2 = x + length * cos(r.angle)
+    y2 = y + length * sin(r.angle) 
+    pygame.draw.line(Target, (0, 0, 0), r.position, (x2, y2), width=3)
+    
+
+def move_loop(Map: pygame.Surface, Target: pygame.Surface, target_location: Tuple[int, int], robot: Robot, exit_key=pygame.K_RETURN):
+    blank = Target.copy()
+    
+    running = True
+    while running:
+        print(robot.angle)
+        running = check_continue(exit_key)
+        
+        forward, ccw, cw = check_movements()
+        
+        new = blank.copy()
+        if forward:
+            robot.drive(1)
+        if ccw != cw:
+            robot.turn(1, cw)
+        
+        draw_robot(new, robot)
+        Map.blit(new, target_location)
+        
+        pygame.display.update()
+        
+        
+    

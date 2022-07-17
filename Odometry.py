@@ -3,7 +3,7 @@ import numpy as np
 class Linear:
     """Class to simulate errors in movement forward
     """
-    def __init__(self, mean, sd) -> None:
+    def __init__(self, mean=0, sd=0) -> None:
         self.mean = mean # usually 0
         self.sd = sd # some error
     
@@ -13,7 +13,7 @@ class Linear:
 class Angular:
     """Class to simulate errors in angle 
     """
-    def __init__(self, mean, sd) -> None:
+    def __init__(self, mean=0, sd=0) -> None:
         self.mean = mean # usually 0 
         self.sd = sd # some error
     
