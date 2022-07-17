@@ -1,5 +1,5 @@
 import pygame
-from Maps import draw_on_surface, end_loop
+from Maps import draw_on_surface, end_loop, place_robot
 
 def main():
     pygame.init()
@@ -35,6 +35,13 @@ def main():
     
     # putting another copy of the map on the right side
     Map.blit(left, (WIDTH/2+1, location[1]))
+    
+    print(points)
+    
+    # allowing user to place robot
+    loc = place_robot(Map, left, location)
+    
+    print(loc)
     
     end_loop()
     

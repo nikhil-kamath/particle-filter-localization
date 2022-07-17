@@ -68,5 +68,43 @@ def check_continue(key=pygame.K_RETURN) -> bool:
     
     return not any(event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == key) for event in pygame.event.get())
         
+
+def place_robot(Map: pygame.Surface, Target: pygame.Surface, target_location: Tuple[int, int], exit_key=pygame.K_RETURN) -> List[Tuple[int, int]]:
+    """Allows user to place robot in a location
+
+    Args:
+        Map (pygame.Surface): The main map which is displayed on pygame.display.update()
+        Target (pygame.Surface): The subsurface which the user can draw on
+        target_location (tuple[int, int]): the location where Target is blit'd onto the main map
+        exit_key (_type_, optional): key to exit this loop. Defaults to pygame.K_RETURN.
+        BG (tuple, optional): background to add on target surface every frame. Defaults to (255, 255, 255).
+
+    Returns:
+        List[Tuple[int, int]]: list of points drawn
+    """
+    blank = Target.copy()
+    running = True
+    loc = (0, 0)
+    while running:
+        running = check_continue(key=exit_key)
+
+        focused = pygame.mouse.get_focused()
+        clicked = pygame.mouse.get_pressed()[0]
+
+        if focused and clicked:
+            position = pygame.mouse.get_pos()
+
+            # if the click was on the subsurface
+            if target_location[0] <= position[0] < target_location[0] + Target.get_width() and target_location[1] <= position[1] < target_location[1] + Target.get_height():
+                target_point = (
+                    position[0] - target_location[0], position[1] - target_location[1])
                 
-    
+                new_map = blank.copy()
+                pygame.draw.circle(new_map, (0, 255, 0), target_point, 5)
+                Map.blit(new_map, target_location)
+
+                loc = target_point
+
+        pygame.display.update()
+
+    return loc
