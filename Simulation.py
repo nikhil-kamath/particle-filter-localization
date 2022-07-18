@@ -98,7 +98,7 @@ def similarity(ideal, sim, sigma):
 def similarities(ideal, sims, sigma):
     return [similarity(ideal, sim, sigma) for sim in sims]
 
-def redistribute(sim_robots: List[Robot], s_list: List[float], dims: Tuple[int, int], scatter_factor: float=.1, abandon_factor: float=100) -> None:
+def redistribute(sim_robots: List[Robot], s_list: List[float], dims: Tuple[int, int], scatter_factor: float=.1, abandon_factor: float=100, spread: float=10) -> None:
     if max(s_list) < abandon_factor:
         scatter_robots(sim_robots, dims)
         return
@@ -120,7 +120,7 @@ def redistribute(sim_robots: List[Robot], s_list: List[float], dims: Tuple[int, 
                 current_index += 1
                 current_sum += s_list[current_index]
             
-            r.position = coords[current_index]
+            r.position = np.add(coords[current_index], (random.randrange(0, spread), random.randrange(0, spread)))
             r.angle = angles[current_index]
     
     
