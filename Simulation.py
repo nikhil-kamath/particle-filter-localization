@@ -1,4 +1,5 @@
 from math import dist, pi
+import random
 from time import sleep
 import numpy as np
 import pygame
@@ -11,14 +12,14 @@ from Odometry import Linear, Angular
 
 def simulation(Map: pygame.Surface, TrueSurface: pygame.Surface, SimSurface: pygame.Surface,
                     true_surface_location: Tuple[int, int], sim_surface_location: Tuple[int, int],
-                    true_robot: Robot, WALL_COLOR: Tuple[int, int, int]=(0, 0, 0), exit_key=pygame.K_RETURN, N=1000,
+                    true_robot: Robot, WALL_COLOR: Tuple[int, int, int]=(0, 0, 0), exit_key=pygame.K_RETURN, N=100,
                     sim_odometry: Tuple[Linear, Angular] = None, sim_laser: Laser=None, true_laser: Laser=None):
 
     true_surface_copy = TrueSurface.copy()
     sim_surface_copy = SimSurface.copy()
     
     if sim_odometry is None:
-        sim_odometry = (Linear(0, .01), Angular(0, .01))
+        sim_odometry = (Linear(0, .01), Angular(0, .005))
     if sim_laser is None:
         sim_laser = Laser(500, true_surface_copy, WALL_COLOR=WALL_COLOR, angles=(0, pi/12, pi/6, pi/4, -pi/12, -pi/6, -pi/4))
     if true_laser is None:
@@ -57,6 +58,8 @@ def simulation(Map: pygame.Surface, TrueSurface: pygame.Surface, SimSurface: pyg
             pygame.display.update()
             sleep(1)
             
+            redistribute(sim_robots, similarity_list, SimSurface.get_size())
+            
 
         forward, ccw, cw = check_movements()
 
@@ -94,3 +97,30 @@ def similarity(ideal, sim, sigma):
             
 def similarities(ideal, sims, sigma):
     return [similarity(ideal, sim, sigma) for sim in sims]
+
+def redistribute(sim_robots: List[Robot], s_list: List[float], dims: Tuple[int, int], scatter_factor: float=.1, abandon_factor: float=100) -> None:
+    if max(s_list) < abandon_factor:
+        scatter_robots(sim_robots, dims)
+        return
+    
+    similarity_sum = sum(s_list)
+    
+    coords = [r.position for r in sim_robots]
+    angles = [r.angle for r in sim_robots]
+    
+    for r in sim_robots:
+        if random.random() < scatter_factor:
+            r.position = (random.randrange(0, dims[0]), random.randrange(0, dims[1]))
+        
+        else:
+            ran = random.random() * similarity_sum
+            current_sum = s_list[0]
+            current_index = 0
+            while current_sum < ran:
+                current_index += 1
+                current_sum += s_list[current_index]
+            
+            r.position = coords[current_index]
+            r.angle = angles[current_index]
+    
+    
