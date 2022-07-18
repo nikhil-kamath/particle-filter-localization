@@ -6,7 +6,6 @@ import pygame
 from typing import List, Tuple
 from Laser import Laser
 from Maps import check_continue, check_movements, draw_robot, scatter_robots
-from Sensors import Sensor, gaussian
 from Robot import Robot
 from Odometry import Linear, Angular
 
@@ -14,6 +13,22 @@ def simulation(Map: pygame.Surface, TrueSurface: pygame.Surface, SimSurface: pyg
                     true_surface_location: Tuple[int, int], sim_surface_location: Tuple[int, int],
                     true_robot: Robot, WALL_COLOR: Tuple[int, int, int]=(0, 0, 0), exit_key=pygame.K_RETURN, N=100,
                     sim_odometry: Tuple[Linear, Angular] = None, sim_laser: Laser=None, true_laser: Laser=None):
+    """runs the main simulation on the 2 screens
+
+    Args:
+        Map (pygame.Surface): main pygame surface, where everything else is overlayed
+        TrueSurface (pygame.Surface): surface where only the true robot's locations are displayed. must have walls
+        SimSurface (pygame.Surface): surface where simulation robots are displayed. should have the same walls as TrueSurface
+        true_surface_location (Tuple[int, int]): location where TrueSurface is Blit'd 
+        sim_surface_location (Tuple[int, int]): location where SimSurface is blit'd
+        true_robot (Robot): true robot object
+        WALL_COLOR (Tuple[int, int, int], optional): color of walls in TrueSurface. Defaults to (0, 0, 0).
+        exit_key (_type_, optional): key to continue. Defaults to pygame.K_RETURN.
+        N (int, optional): number of simulation robots. Defaults to 100.
+        sim_odometry (Tuple[Linear, Angular], optional): odometry for error in simulation robots. Defaults to None.
+        sim_laser (Laser, optional): laser sensor for simulation robots. Defaults to None.
+        true_laser (Laser, optional): laser sensor for true robot. Defaults to None.
+    """
 
     hint = pygame.font.SysFont("Monaco", 25)
     hint_box = hint.render("move with W, A, D. estimate location with SPACE.", True, (200, 200, 200))
@@ -32,7 +47,6 @@ def simulation(Map: pygame.Surface, TrueSurface: pygame.Surface, SimSurface: pyg
         
     sim_robots = [Robot(*sim_odometry) for _ in range(N)]
     scatter_robots(sim_robots, TrueSurface.get_size())
-    # sim_robots[0].position = np.add(true_robot.position, (50, 0))
     
     running = True
     while running:
@@ -70,10 +84,10 @@ def simulation(Map: pygame.Surface, TrueSurface: pygame.Surface, SimSurface: pyg
 
         if forward:
             for robot in (true_robot, *sim_robots):
-                robot.drive(.1)
+                robot.drive(.5)
         if cw != ccw:
             for robot in (true_robot, *sim_robots):
-                robot.turn(.1, cw)
+                robot.turn(.5, cw)
 
         draw_robot(new_true_surface, true_robot, true_robot=True)
         for sim in sim_robots:

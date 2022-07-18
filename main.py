@@ -1,9 +1,7 @@
-from urllib import robotparser
 import pygame
-from Maps import draw_walls, move_loop, draw_on_surface, draw_robot, end_loop, place_robot
+from Maps import draw_walls,  end_loop, place_robot
 from Odometry import Angular, Linear
 from Robot import Robot
-from Sensors import Sensor
 from Simulation import simulation
 
 def main():
