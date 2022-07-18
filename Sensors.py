@@ -46,7 +46,7 @@ def CNDF(x):
     return (1. - neg) * y + neg * (1. - y)
 
 def probability(sensor: Sensor, measured_dist: float, measured_angle: float, true_dist, true_angle) -> float:
-    return gaussian(measured_dist, true_dist, sensor.sd_d+50) * gaussian(measured_angle, true_angle, sensor.sd_a + .75)
+    return gaussian(measured_dist, true_dist, sensor.sd_d) * gaussian(measured_angle, true_angle, sensor.sd_a)
 
 
 

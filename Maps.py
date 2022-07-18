@@ -164,7 +164,7 @@ def move_loop(Map: pygame.Surface, Target: pygame.Surface, target_location: Tupl
 
 def simulation_loop(Map: pygame.Surface, TrueSurface: pygame.Surface, SimSurface: pygame.Surface,
                     true_surface_location: Tuple[int, int], sim_surface_location: Tuple[int, int],
-                    true_robot: Robot, landmarks: List[Tuple[int, int]], exit_key=pygame.K_RETURN, num_sims=1000,
+                    true_robot: Robot, landmarks: List[Tuple[int, int]], exit_key=pygame.K_RETURN, num_sims=100,
                     sim_odometry: Tuple[Linear, Angular] = None, sim_sensor: Sensor = None, true_sensor: Sensor = None):
 
     """main simulation
@@ -266,7 +266,7 @@ def calcWeight(sim: Robot, sim_sensor: Sensor, landmarks: List[Tuple[int, int]],
     for sim_reading, true_reading in zip(sim_measurements, true_readings):
         product *= probability(sim_sensor, *sim_reading, *true_reading) + .01
     
-    return product
+    return product * 10 ** len(landmarks)
 
 def calcWeights(sim_robots: List[Robot], sim_sensors: List[Sensor], landmarks: List[Tuple[int, int]], true_readings: List[Tuple[float, float]]) -> List[float]:
     """calculates similarities between each simulated robot and the true robot
