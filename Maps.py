@@ -138,6 +138,52 @@ def draw_robot(Target: pygame.Surface, r: Robot, true_robot=True):
     pygame.draw.line(Target, (0, 0, 0), r.position, (x2, y2), width=3)
     
 
+def draw_walls(Map: pygame.Surface, Target: pygame.Surface, target_location: Tuple[int, int], exit_key=pygame.K_RETURN, hint_color=(0, 255, 0), wall_color=(0, 0, 0), width=3) -> List[Tuple[Tuple[int, int]]]:
+    walls = []
+
+    running = True
+    drawing = None
+    while running:
+        pygame.time.delay(5)
+        running = check_continue(exit_key)
+
+        focused = pygame.mouse.get_focused()
+        left_click = pygame.mouse.get_pressed()[0]
+        right_click = pygame.mouse.get_pressed()[2]
+        position = (pygame.mouse.get_pos()[0] - target_location[0], pygame.mouse.get_pos()[1] - target_location[1])
+        
+        if focused:
+            # on the initial left click, save the first point as drawing
+            if drawing:
+                Target.blit(before_line, (0, 0))
+
+                # we can use right click to cancel this line
+                if right_click:
+                    drawing = None
+                    Map.blit(before_line, target_location)
+
+                # drawing dotted lines while user is still dragging mouse
+                elif left_click:
+                    pygame.draw.line(Target, hint_color,
+                                     drawing, position, width=width)
+                    Map.blit(Target, target_location)
+
+                # when user lets go of left click, draw our actual line
+                else:
+                    pygame.draw.line(Target, wall_color,
+                                     drawing, position, width=width)
+                    Map.blit(Target, target_location)
+                    walls.append((drawing, position))
+                    drawing = None
+
+            elif left_click:
+                drawing = position
+                before_line = Target.copy()
+
+        pygame.display.update()
+
+    return walls
+
 def move_loop(Map: pygame.Surface, Target: pygame.Surface, target_location: Tuple[int, int], robots: List[Robot], exit_key=pygame.K_RETURN):
     blank = Target.copy()
     
