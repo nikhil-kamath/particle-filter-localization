@@ -1,7 +1,9 @@
+from urllib import robotparser
 import pygame
-from Maps import move_loop, draw_on_surface, draw_robot, end_loop, place_robot
+from Maps import move_loop, draw_on_surface, draw_robot, end_loop, place_robot, simulation_loop
 from Odometry import Angular, Linear
 from Robot import Robot
+from Sensors import Sensor
 
 def main():
     pygame.init()
@@ -33,27 +35,26 @@ def main():
     hint = pygame.font.SysFont('Monaco', 100)
     hint_box = hint.render('draw here', True, (150, 150, 150))
     Map.blit(hint_box, (WIDTH/4-hint_box.get_width()/2, (HEIGHT-HEADER_HEIGHT-hint_box.get_height())/2))
-    points = draw_on_surface(Map, left, left_panel_location)
+    landmarks = draw_on_surface(Map, left, left_panel_location)
     
     # putting another copy of the map on the right side
-    Map.blit(left, (WIDTH/2+1, left_panel_location[1]))
+    right = left.copy()
+    right_panel_location = (WIDTH/2+1, left_panel_location[1])
+    Map.blit(right, right_panel_location)
     
-    print(points)
+    print("landmarks:", landmarks)
     
     # allowing user to place robot
     robot_position, left = place_robot(Map, left, left_panel_location)
-    print(robot_position)
+    print("robot starting position:", robot_position)
     
     # move loop
-    robots = [
-        Robot(Linear(0, 0), Angular(0, 0), robot_position),
-        Robot(Linear(0, .01), Angular(0, .01), robot_position),
-        Robot(Linear(0, .05), Angular(0, .05), robot_position),
-        Robot(Linear(0, .1), Angular(0, .1), robot_position),
-    ]
-    move_loop(Map, left, left_panel_location, robots)
+    true_linear = Linear(0, .005)
+    true_angular = Angular(0, 0.005)
+    true_robot = Robot(true_linear, true_angular, robot_position)
     
-    
+    simulation_loop(Map, left, right, left_panel_location, right_panel_location,
+                    true_robot, landmarks,)
     
     end_loop()
     
