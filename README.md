@@ -1,2 +1,2 @@
 ﻿# particle-filter-localization
-![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
+![progress 1](https://github.com/nikhil-kamath/particle-filter-localization/blob/main/progress_pictures/wall_similarities_1.png)
