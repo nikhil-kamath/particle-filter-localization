@@ -1,6 +1,6 @@
 from urllib import robotparser
 import pygame
-from Maps import draw_walls, move_loop, draw_on_surface, draw_robot, end_loop, place_robot, simulation_loop
+from Maps import draw_walls, move_loop, draw_on_surface, draw_robot, end_loop, place_robot
 from Odometry import Angular, Linear
 from Robot import Robot
 from Sensors import Sensor
@@ -36,10 +36,14 @@ def main():
     left_panel_location = (0, HEADER_HEIGHT+1)
     hint = pygame.font.SysFont('Monaco', 100)
     hint_box = hint.render('draw here', True, (150, 150, 150))
+    hint_subtitle = pygame.font.SysFont('Monaco', 40)
+    hint_subtitle_box = hint_subtitle.render('click and drag', True, (175, 175, 175))
     Map.blit(hint_box, (WIDTH/4-hint_box.get_width()/2, (HEIGHT-HEADER_HEIGHT-hint_box.get_height())/2))
+    Map.blit(hint_subtitle_box, (WIDTH/4-hint_box.get_width()/2, (HEIGHT-HEADER_HEIGHT-hint_subtitle_box.get_height())/2 + hint_box.get_height() ))
+    
+    
     
     lines = draw_walls(Map, left, left_panel_location)
-    # landmarks = draw_on_surface(Map, left, left_panel_location)
     
     # putting another copy of the map on the right side
     right = left.copy()

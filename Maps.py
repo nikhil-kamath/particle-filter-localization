@@ -100,8 +100,22 @@ def place_robot(Map: pygame.Surface, Target: pygame.Surface, target_location: Tu
         List[Tuple[int, int]]: list of points drawn
     """
     blank = Target.copy()
+    Map.blit(blank, target_location)
+    pygame.display.update()
+    
+    hint = pygame.font.SysFont("Monaco", 50)
+    hint_continue = pygame.font.SysFont("Monaco", 25)
+    hint_box = hint.render("click to place robot", True, (175, 175, 175))
+    hint_continue_box = hint_continue.render("press enter to continue", True, (175, 175, 175))
+    
+    Map.blit(hint_box, (Map.get_width()/4-hint_box.get_width() /
+             2, Map.get_height() - 1.5 * hint_box.get_height()))
+
+
+    
     running = True
     loc = (0, 0)
+    
     while running:
         running = check_continue(key=exit_key)
 
@@ -122,6 +136,9 @@ def place_robot(Map: pygame.Surface, Target: pygame.Surface, target_location: Tu
 
                 loc = target_point
 
+        if loc != (0, 0):
+            Map.blit(hint_continue_box, (Map.get_width()/4-hint_continue_box.get_width() /
+                                2, Map.get_height() - 1.5 * hint_continue_box.get_height()))
         pygame.display.update()
 
     return loc, blank
@@ -138,7 +155,8 @@ def draw_robot(Target: pygame.Surface, r: Robot, true_robot=True):
 
 def draw_walls(Map: pygame.Surface, Target: pygame.Surface, target_location: Tuple[int, int], exit_key=pygame.K_RETURN, hint_color=(0, 255, 0), wall_color=(0, 0, 0), width=3) -> List[Tuple[Tuple[int, int]]]:
     walls = []
-
+    hint = pygame.font.SysFont("Monaco", 25)
+    hint_box = hint.render("press enter to continue", True, (175, 175, 175))
     running = True
     drawing = None
     while running:
@@ -178,6 +196,8 @@ def draw_walls(Map: pygame.Surface, Target: pygame.Surface, target_location: Tup
                 drawing = position
                 before_line = Target.copy()
 
+        if walls:
+            Map.blit(hint_box, (Map.get_width()/4-hint_box.get_width()/2, Map.get_height() - 1.5 * hint_box.get_height() ))
         pygame.display.update()
 
     return walls

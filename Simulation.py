@@ -15,6 +15,11 @@ def simulation(Map: pygame.Surface, TrueSurface: pygame.Surface, SimSurface: pyg
                     true_robot: Robot, WALL_COLOR: Tuple[int, int, int]=(0, 0, 0), exit_key=pygame.K_RETURN, N=100,
                     sim_odometry: Tuple[Linear, Angular] = None, sim_laser: Laser=None, true_laser: Laser=None):
 
+    hint = pygame.font.SysFont("Monaco", 25)
+    hint_box = hint.render("move with W, A, D. estimate location with SPACE.", True, (200, 200, 200))
+    
+    Map.blit(TrueSurface, true_surface_location)
+    Map.blit(SimSurface, sim_surface_location)
     true_surface_copy = TrueSurface.copy()
     sim_surface_copy = SimSurface.copy()
     
@@ -76,7 +81,8 @@ def simulation(Map: pygame.Surface, TrueSurface: pygame.Surface, SimSurface: pyg
 
         Map.blit(new_true_surface, true_surface_location)
         Map.blit(new_sim_surface, sim_surface_location)
-
+        Map.blit(hint_box, (Map.get_width()/4-hint_box.get_width() /
+                 2, Map.get_height() - 1.5 * hint_box.get_height()))
         pygame.display.update()
             
 def similarity(ideal, sim, sigma):
@@ -98,7 +104,7 @@ def similarity(ideal, sim, sigma):
 def similarities(ideal, sims, sigma):
     return [similarity(ideal, sim, sigma) for sim in sims]
 
-def redistribute(sim_robots: List[Robot], s_list: List[float], dims: Tuple[int, int], scatter_factor: float=.1, abandon_factor: float=100, spread: float=10) -> None:
+def redistribute(sim_robots: List[Robot], s_list: List[float], dims: Tuple[int, int], scatter_factor: float=.1, abandon_factor: float=100, spread: float=25) -> None:
     if max(s_list) < abandon_factor:
         scatter_robots(sim_robots, dims)
         return
