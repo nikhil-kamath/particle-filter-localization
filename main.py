@@ -47,7 +47,6 @@ def main():
     right = left.copy()
     right_panel_location = (WIDTH/2+1, left_panel_location[1])
     Map.blit(right, right_panel_location)
-    
     print("landmarks:", lines)
     
     # allowing user to place robot
