@@ -1,4 +1,3 @@
-from urllib import robotparser
 import pygame
 from Maps import draw_walls, move_loop, draw_on_surface, draw_robot, end_loop, place_robot
 from Odometry import Angular, Linear

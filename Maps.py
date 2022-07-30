@@ -159,30 +159,31 @@ def draw_walls(Map: pygame.Surface, Target: pygame.Surface, target_location: Tup
     hint_box = hint.render("press enter to continue", True, (175, 175, 175))
     running = True
     drawing = None
+
     while running:
         pygame.time.delay(5)
         running = check_continue(exit_key)
 
         focused = pygame.mouse.get_focused()
         left_click = pygame.mouse.get_pressed()[0]
-        right_click = pygame.mouse.get_pressed()[2]
         position = (pygame.mouse.get_pos()[0] - target_location[0], pygame.mouse.get_pos()[1] - target_location[1])
         
         if focused:
+            # keep a copy of the Target with only finalized lines
+            hint_copy = Target.copy()
+
             # on the initial left click, save the first point as drawing
-            if drawing:
-                Target.blit(before_line, (0, 0))
+            if not drawing and left_click:
+                drawing = position
 
-                # we can use right click to cancel this line
-                if right_click:
-                    drawing = None
-                    Map.blit(before_line, target_location)
+            # while we are drawing
+            elif drawing:
 
-                # drawing dotted lines while user is still dragging mouse
-                elif left_click:
-                    pygame.draw.line(Target, hint_color,
+                # drawing green lines on the hint surface while the user is still choosing
+                if left_click:
+                    pygame.draw.line(hint_copy, hint_color,
                                      drawing, position, width=width)
-                    Map.blit(Target, target_location)
+                    Map.blit(hint_copy, target_location)
 
                 # when user lets go of left click, draw our actual line
                 else:
@@ -192,12 +193,10 @@ def draw_walls(Map: pygame.Surface, Target: pygame.Surface, target_location: Tup
                     walls.append((drawing, position))
                     drawing = None
 
-            elif left_click:
-                drawing = position
-                before_line = Target.copy()
-
         if walls:
             Map.blit(hint_box, (Map.get_width()/4-hint_box.get_width()/2, Map.get_height() - 1.5 * hint_box.get_height() ))
+
+
         pygame.display.update()
 
     return walls

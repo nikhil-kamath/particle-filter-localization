@@ -36,6 +36,7 @@ def simulation(Map: pygame.Surface, TrueSurface: pygame.Surface, SimSurface: pyg
     
     running = True
     while running:
+        pygame.time.wait(int(1/30*100))
         running = check_continue(key=exit_key)
         
         new_true_surface = true_surface_copy.copy()
@@ -70,10 +71,10 @@ def simulation(Map: pygame.Surface, TrueSurface: pygame.Surface, SimSurface: pyg
 
         if forward:
             for robot in (true_robot, *sim_robots):
-                robot.drive(.1)
+                robot.drive(2.5)
         if cw != ccw:
             for robot in (true_robot, *sim_robots):
-                robot.turn(.1, cw)
+                robot.turn(1, cw)
 
         draw_robot(new_true_surface, true_robot, true_robot=True)
         for sim in sim_robots:
@@ -104,7 +105,7 @@ def similarity(ideal, sim, sigma):
 def similarities(ideal, sims, sigma):
     return [similarity(ideal, sim, sigma) for sim in sims]
 
-def redistribute(sim_robots: List[Robot], s_list: List[float], dims: Tuple[int, int], scatter_factor: float=.1, abandon_factor: float=100, spread: float=25) -> None:
+def redistribute(sim_robots: List[Robot], s_list: List[float], dims: Tuple[int, int], scatter_factor: float=.1, abandon_factor: float=100, distance_spread: float=25, angle_spread: float=pi/36) -> None:
     if max(s_list) < abandon_factor:
         scatter_robots(sim_robots, dims)
         return
@@ -126,7 +127,7 @@ def redistribute(sim_robots: List[Robot], s_list: List[float], dims: Tuple[int, 
                 current_index += 1
                 current_sum += s_list[current_index]
             
-            r.position = np.add(coords[current_index], (random.randrange(0, spread), random.randrange(0, spread)))
-            r.angle = angles[current_index]
+            r.position = np.add(coords[current_index], (random.randrange(0, distance_spread), random.randrange(0, distance_spread)))
+            r.angle = angles[current_index] + random.random() * angle_spread - angle_spread / 2
     
     
