@@ -2,13 +2,8 @@ from math import cos, sin
 from random import randrange
 from typing import List, Tuple
 
-import numpy as np
-from Odometry import Angular, Linear
 from Robot import Robot
 import pygame
-
-from Sensors import Sensor, probability
-
 
 def draw_points(Map: pygame.Surface, points, color=(255, 0, 0), radius=3):
     for p in points: pygame.draw.circle(Map, color, p, radius)
@@ -224,7 +219,6 @@ def move_loop(Map: pygame.Surface, Target: pygame.Surface, target_location: Tupl
         Map.blit(new, target_location)
         
         pygame.display.update()
-
 
 def scatter_robots(robots: List[Robot], dims: Tuple[int, int]) -> None:
     """randomize location of robots
